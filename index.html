@@ -1,26 +1,27 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>Document</title>
 
-<link rel="stylesheet" href="dist/flatpickr.css">
-<link rel="stylesheet" href="dist/ie.css">
+  <link rel="stylesheet" href="dist/flatpickr.css">
+  <link rel="stylesheet" href="dist/ie.css">
+  <link rel="stylesheet" href="style.css">
 
   <link rel="stylesheet" href="dist/plugins/confirmDate/confirmDate.css">
   <link rel="stylesheet" href="dist/plugins/monthSelect/monthSelect.css">
   <style type="text/css">
+    *:focus {}
 
-  *:focus {
-  }
-
-  input {
-    margin-bottom: 10px;
-  }
+    input {
+      margin-bottom: 10px;
+    }
   </style>
 </head>
+
 <body>
   <div style="padding:15vw; min-height: 120vh">
     <!-- <div id=ignored>Ignored</div>
@@ -30,39 +31,153 @@
       <p><input type="text" placeholder="Date 3"  class="date"></p>
     </article> -->
 
-  <div>
-     <label>Date 1
-      <input placeholder="Select Date..." class="date"  />
-    </label>
-    <label>Date 2
-      <input placeholder="Select Date..." id="date"  />
-    </label>
+    <div>
+      <label>Date 1
+        <input placeholder="Select Date..." class="date" />
+      </label>
+      <label>Date 2
+        <input placeholder="Select Date..." id="date" />
+      </label>
 
-    <!--<input placeholder="Random Input"  > -->
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
+      <br />
+
+      <div class='ddlb-loader'>
+        <div class='select year-select-container'>
+          <ul class='year-select zg-ul-select' id="be-select">
+            <li class='option'>1</li>
+            <li class='option'>2</li>
+            <li class='option'>3</li>
+            <li class='option'>4</li>
+            <li class='option'>5</li>
+            <li class='option'>6</li>
+          </ul>
+        </div>
+      </div>
+
+
+      <div class='ddlb-loader'>
+        <div id='content'></div>
+      </div>
+
+      <!--<input placeholder="Random Input"  > -->
+
+    </div>
 
   </div>
 
-  </div>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/classlist/1.2.20171210/classList.min.js"></script>
+  <script src="./dist/flatpickr.js"></script>
+  <script src="./dist/plugins/rangePlugin.js"></script>
+  <script src="./dist/plugins/confirmDate/confirmDate.js"></script>
+  <script src="./dist/plugins/minMaxTimePlugin.js"></script>
+  <script src="./dist/plugins/monthSelect/monthSelect.js"></script>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/classlist/1.2.20171210/classList.min.js"></script>
-<script src="./dist/flatpickr.js"></script>
-<script src="./dist/plugins/rangePlugin.js"></script>
-<script src="./dist/plugins/confirmDate/confirmDate.js"></script>
-<script src="./dist/plugins/minMaxTimePlugin.js"></script>
-<script src="./dist/plugins/monthSelect/monthSelect.js"></script>
+  <script src="./dist/plugins/scrollPlugin.js"></script>
+  <script src="./dist/plugins/weekSelect/weekSelect.js"></script>
+  <script src="./dist/l10n/ru.js"></script>
+  <script src="./dist/l10n/no.js"></script>
+  <script>
+    const printArea = document.getElementById('content');
+    const users = [ {id: 1, name: 'Michael Scott', title: 'Regional Manager'}, {id: 2, name: 'Pam Beesly', title: 'Receptionist'}, 
+    {id: 3, name: 'Pam Beesly 3', title: 'Receptionist'}, {id: 4, name: 'Pam Beesly 4', title: 'Receptionist'}, {id: 4, name: 'Pam Beesly 4', title: 'Receptionist'}
+    , {id: 4, name: 'Pam Beesly 4', title: 'Receptionist'}, {id: 4, name: 'Pam Beesly 4', title: 'Receptionist'}, {id: 4, name: 'Pam Beesly 4', title: 'Receptionist'}, {id: 4, name: 'Pam Beesly 4', title: 'Receptionist'}];
 
-<script src="./dist/plugins/scrollPlugin.js"></script>
-<script src="./dist/plugins/weekSelect/weekSelect.js"></script>
-<script src="./dist/l10n/ru.js"></script>
-<script src="./dist/l10n/no.js"></script>
-<script>
-  flatpickr.defaultConfig.time_24hr = false;
-var fp = flatpickr(".date", {
-  locale: "ru",
-  //mode: "range",
-          plugins: [new monthSelect({shorthand: false, dateFormat: "m.y", altFormat: "F Y"})]
-})
+    const dropdown = () => {
+      const component = document.createElement('div');
 
-</script>
+      const input = createInput();
+      const dropdown = showDropdown();
+      component.appendChild(input);
+      component.appendChild(dropdown);
+      printArea.appendChild(component);
+
+    }
+
+
+    const createInput = () => {
+      const input = document.createElement('div');
+      input.classList.add("input");
+      input.addEventListener('click', toggleDropdown);
+
+      const inputPlaceHolder = document.createElement('div');
+      inputPlaceHolder.classList = 'input__placeholder';
+
+      const placeholder = document.createElement('p');
+      placeholder.textContent = 'Select year';
+      placeholder.classList.add('placeholder');
+
+      inputPlaceHolder.append(placeholder);
+      inputPlaceHolder.append(dropdownIcon());
+      input.appendChild(inputPlaceHolder);
+
+      return input;
+    }
+
+    const showDropdown = () => {
+      const structure =  document.createElement('div');
+      structure.classList.add("structure", "hide");
+
+      users.forEach(user => {
+        const {id, name, title} = user;
+        const option = document.createElement('div');
+        option.addEventListener('click', () => selectOption(name));
+        option.setAttribute("id", id);
+        const optionDisplayName = document.createElement('h5');
+        optionDisplayName.textContent = name;
+
+        const optionTitle = document.createElement('p');
+        optionTitle.textContent = `(${title})`;
+
+        option.appendChild(optionDisplayName);
+        option.appendChild(optionTitle);
+        structure.appendChild(option);
+      });
+      return structure;
+    }
+
+    const dropdownIcon = () => {
+      const dropdownSpan = document.createElement('span');
+      dropdownSpan.classList.add('chevron-down-solid')
+      return dropdownSpan;
+    }
+
+    const toggleDropdown = () => {
+      const dropdown = document.querySelector(".structure");
+      dropdown.classList.toggle('hide');
+
+      const input = document.querySelector('.input');
+      input.classList.toggle('input__active');
+    }
+
+    const selectOption = (name) => {
+      const placeHolderText = document.querySelector('.placeholder');
+      placeHolderText.textContent = name;
+      placeHolderText.classList.add('input__selected');
+      toggleDropdown();
+    }
+
+    dropdown();
+
+  </script>
+  <script>
+    flatpickr.defaultConfig.time_24hr = false;
+    var fp = flatpickr(".date", {
+      locale: "ru",
+      //mode: "range",
+      plugins: [new monthSelect({ shorthand: false, dateFormat: "m.y", altFormat: "F Y" })]
+    })
+
+  </script>
 </body>
+
 </html>
+
+
+<!-- https://medium.com/@kyleducharme/developing-custom-dropdowns-with-vanilla-js-css-in-under-5-minutes-e94a953cee75 -->
