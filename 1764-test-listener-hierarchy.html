@@ -1,0 +1,46 @@
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Form Test Page</title>
+  </head>
+  <body style="padding: 1em">
+    <input type="text" id="test" />
+    <script>
+      const touchBegin = "touchBegin";
+      const clickBegin = "clickBegin";
+      const focusBegin = "focusBegin";
+      const touchEnd = "touchEnd";
+      const clickEnd = "clickEnd";
+      const focusEnd = "focusEnd";
+      performance.mark(touchBegin);
+      performance.mark(clickBegin);
+      performance.mark(focusBegin);
+      const textInput = document.getElementById("test");
+      function handler(event) {
+        console.log(`Handled event ${event.type}`);
+        switch (event.type) {
+          case "click":
+            performance.mark(clickEnd);
+            performance.measure("Click", clickBegin, clickEnd);
+            console.log(performance.getEntriesByType("measure"));
+            break;
+          case "touchstart":
+            performance.mark(touchEnd);
+            performance.measure("Touch", touchBegin, touchEnd);
+            console.log(performance.getEntriesByType("measure"));
+            break;
+          case "focus":
+            performance.mark(focusEnd);
+            performance.measure("Focus", focusBegin, focusEnd);
+            console.log(performance.getEntriesByType("measure"));
+            break;
+          default:
+            break;
+        }
+      }
+      textInput.addEventListener("touchstart", handler);
+      textInput.addEventListener("click", handler);
+      textInput.addEventListener("focus", handler);
+    </script>
+  </body>
+</html>
